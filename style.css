@@ -1,0 +1,25 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+.container {
+    display: flex;
+    gap: 20px;
+}
+.btn {
+    width: 150px;
+    height: 150px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+.btn:active {
+    transform: scale(0.9); 
+}
+.blue { background-color: #007bff; }
+.red { background-color: #ff4d4d; }
