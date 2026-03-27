@@ -5,11 +5,14 @@ body {
     height: 100vh;
     margin: 0;
     background-color: #f0f0f0;
+    overscroll-behavior: none; 
 }
+
 .container {
     display: flex;
     gap: 20px;
 }
+
 .btn {
     width: 150px;
     height: 150px;
@@ -17,9 +20,14 @@ body {
     border-radius: 15px;
     cursor: pointer;
     transition: transform 0.1s;
+    touch-action: manipulation; 
+    -webkit-tap-highlight-color: transparent; 
 }
+
 .btn:active {
-    transform: scale(0.9); 
+    transform: scale(0.95);
+    filter: brightness(0.8); 
 }
+
 .blue { background-color: #007bff; }
 .red { background-color: #ff4d4d; }
