@@ -1,29 +1,55 @@
-const blueSound = new Audio('blue.mp3');
-const redSound = new Audio('red.mp3');
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-// Ρυθμίζουμε να παίζουν συνέχεια όσο είναι πατημένα
-blueSound.loop = true;
-redSound.loop = true;
+async function loadSound(url) {
+    const response = await fetch(url);
+    const arrayBuffer = await response.arrayBuffer();
+    return await audioCtx.decodeAudioData(arrayBuffer);
+}
+
+let sounds = {};
+
+// Φόρτωση των ήχων στην αρχή
+async function setup() {
+    sounds.blue = await loadSound('blue.mp3');
+    sounds.red = await loadSound('red.mp3');
+}
+
+setup();
+
+let sources = {};
+
+function playSound(color) {
+    // Αν ο ήχος είναι ήδη σε παύση, τον ξεκινάμε
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+    
+    const source = audioCtx.createBufferSource();
+    source.buffer = sounds[color];
+    source.loop = true;
+    source.connect(audioCtx.destination);
+    source.start(0);
+    sources[color] = source;
+}
+
+function stopSound(color) {
+    if (sources[color]) {
+        sources[color].stop();
+        sources[color] = null;
+    }
+}
 
 const blueBtn = document.getElementById('blueBtn');
 const redBtn = document.getElementById('redBtn');
 
-// Λειτουργία έναρξης ήχου
-const startBlue = (e) => { e.preventDefault(); blueSound.play(); };
-const startRed = (e) => { e.preventDefault(); redSound.play(); };
+// Events για Μπλε
+blueBtn.addEventListener('mousedown', () => playSound('blue'));
+blueBtn.addEventListener('touchstart', (e) => { e.preventDefault(); playSound('blue'); });
+blueBtn.addEventListener('mouseup', () => stopSound('blue'));
+blueBtn.addEventListener('touchend', () => stopSound('blue'));
 
-// Λειτουργία παύσης ήχου
-const stopBlue = () => { blueSound.pause(); blueSound.currentTime = 0; };
-const stopRed = () => { redSound.pause(); redSound.currentTime = 0; };
-
-// Events για το Μπλε Κουμπί (Ποντίκι + Αφή)
-blueBtn.addEventListener('mousedown', startBlue);
-blueBtn.addEventListener('mouseup', stopBlue);
-blueBtn.addEventListener('touchstart', startBlue);
-blueBtn.addEventListener('touchend', stopBlue);
-
-// Events για το Κόκκινο Κουμπί (Ποντίκι + Αφή)
-redBtn.addEventListener('mousedown', startRed);
-redBtn.addEventListener('mouseup', stopRed);
-redBtn.addEventListener('touchstart', startRed);
-redBtn.addEventListener('touchend', stopRed);
+// Events για Κόκκινο
+redBtn.addEventListener('mousedown', () => playSound('red'));
+redBtn.addEventListener('touchstart', (e) => { e.preventDefault(); playSound('red'); });
+redBtn.addEventListener('mouseup', () => stopSound('red'));
+redBtn.addEventListener('touchend', () => stopSound('red'));
